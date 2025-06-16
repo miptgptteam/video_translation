@@ -54,7 +54,7 @@ data/
 | 01 | **Audio extraction** | `ffmpeg` | `01_extract.wav` |
 | 02 | **Voice activity detection** | *Silero VAD* (`silero-vad`) | `02_vad.json` |
 | 03 | **ASR** | *Whisper‑large‑v3‑turbo* via **faster‑whisper** (`int8_float16`) | `03_asr.jsonl` |
-| 04 | **Punctuation & casing** | `ruautopunct` | `04_punct.jsonl` |
+| 04 | **Punctuation & casing** | `deepmultilingualpunctuation` | `04_punct.jsonl` |
 | 05 | **Paragraph grouping** | custom merge ≤ 250 chars **or** ≤ 15 s | `05_parsed.jsonl` |
 | 06 | **Machine translation** | *ALMA‑13B‑R* via **CTranslate2** (`int8_float16`) + optional TSV glossary | `06_ru.jsonl` |
 | 07 | **Text‑to‑speech** | *Coqui XTTS‑v2* (Russian female) | `07_tts.wav` |
@@ -94,7 +94,7 @@ dependencies:
       - ctranslate2==4.6.0
       - sentencepiece
       - silero-vad==0.4.0
-      - ruautopunct==1.2.3
+      - deepmultilingualpunctuation==1.0.1
       - tts==0.22.0           # Coqui XTTS‑v2
       - torch                 # auto‑selects correct CUDA wheel
 ```
@@ -139,7 +139,7 @@ BATCH_MT  = 16
 
 * **VAD**: `silero.utils.get_speech_ts(wav, model, sampling_rate, min_speech_duration_ms=300, max_speech_duration_s=30)`.  
 * **ASR**: `WhisperModel.transcribe(..., word_timestamps=True, vad_filter=False)`.  
-* **ruautopunct**: use `RuAutoPunct().restore_punctuations_batch(...)`.  
+* **Punctuation**: `deepmultilingualpunctuation.PunctuationModel.restore_punctuation(text)`.
 * **ALMA via CTranslate2**: pass target prefix `[">>ru<<"]`; enable `beam_size=4`, `max_batch_size` from config.  
 * **XTTS‑v2** example:
 

@@ -1,7 +1,16 @@
 import logging
 from pathlib import Path
-from ruautopunct import RuAutoPunct
+from deepmultilingualpunctuation import PunctuationModel
 from src.utils.io import read_jsonl, write_jsonl
+
+_MODEL = None
+
+
+def _get_model():
+    global _MODEL
+    if _MODEL is None:
+        _MODEL = PunctuationModel()
+    return _MODEL
 
 
 def run(asr_jsonl: Path, punct_out: Path):
@@ -10,8 +19,7 @@ def run(asr_jsonl: Path, punct_out: Path):
         return
     logging.info(f"[04] Restoring punctuation for {asr_jsonl}")
     segments = read_jsonl(asr_jsonl)
-    texts = [seg['text'] for seg in segments]
-    punct = RuAutoPunct().restore_punctuations_batch(texts)
-    for seg, p in zip(segments, punct):
-        seg['text'] = p
+    model = _get_model()
+    for seg in segments:
+        seg['text'] = model.restore_punctuation(seg['text'])
     write_jsonl(segments, punct_out)
